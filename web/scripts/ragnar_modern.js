@@ -188,14 +188,12 @@ function exportCredentialsCSV() {
     URL.revokeObjectURL(url);
 }
 
-// ============================================================================
-// FLEET CONFIG EXPORT / IMPORT
+// =====================================================================// FLEET CONFIG EXPORT / IMPORT
 // Download this unit's settings as JSON, then upload on other Ragnars so the
 // same switches/options come up identically across the fleet. Secrets and
 // per-device state (MAC blacklist, RuSense node layout) never travel; display
 // & hardware keys only apply when the operator opts in.
-// ============================================================================
-function exportRagnarConfig() {
+// =====================================================================function exportRagnarConfig() {
     // Hit the endpoint directly and let the server's Content-Disposition header
     // drive the save. The fetch()+blob+a.download route works on desktop but
     // fails silently on iOS Safari (it ignores `download` and won't save a
@@ -578,6 +576,13 @@ const configMetadata = {
     exploit_ai_triage: {
         label: "AI Exploit Triage",
         description: "Ask the AI which CVEs are actually plausible for the observed banner before attempting. Reduces noise and crash risk."
+    ai_creds_enabled: {
+        label: "AI-Assisted Credentials",
+        description: "Ask the AI for a few ranked (user, password) pairs grounded in host context (hostname, MAC, ports, banners) and try those BEFORE the wordlist spray. Falls back to the wordlist whenever AI is off or unreachable."
+    },
+    ai_creds_max_pairs: {
+        label: "AI Credential Pairs (max)",
+        description: "Maximum ranked pairs the AI may propose per host/service (1-50). Higher is slower and noisier. Default: 25."
     },
     wardriving_enabled: {
         label: "Enable Wardriving",
@@ -1269,8 +1274,7 @@ function onMeshTabToggled(cb) {
 }
 window.onMeshTabToggled = onMeshTabToggled;
 
-// ==================== Web Terminal (xterm.js over Socket.IO) ====================
-const TERMINAL_KEY = 'terminal_enabled';
+// ==================== Web Terminal (xterm.js over Socket.IO) =============const TERMINAL_KEY = 'terminal_enabled';
 let _term = null, _termFit = null, _termSocket = null, _termResizeHooked = false;
 
 function _terminalEnabled() { return localStorage.getItem(TERMINAL_KEY) === '1'; }
@@ -1509,11 +1513,9 @@ function showNetworkSubtab(name) {
     // Diagnostics tools run on demand; we only prefill the MTR start-point list.
 }
 
-// ============================================================================
-// WiFi Spectrum Analyzer (Network > WiFi Analyzer sub-tab)
+// =====================================================================// WiFi Spectrum Analyzer (Network > WiFi Analyzer sub-tab)
 // Passive tri-band survey. Backend: /api/net/wifi/* (wifi_analyzer.py)
-// ============================================================================
-const _wifiState = { iface: '', band: 'all', view: 'dome', data: null, selected: null, auto: null, inited: false, bt: null, btOn: false, btBusy: false, btSelected: null,
+// =====================================================================const _wifiState = { iface: '', band: 'all', view: 'dome', data: null, selected: null, auto: null, inited: false, bt: null, btOn: false, btBusy: false, btSelected: null,
     zb: null, zbOn: false, zbBusy: false, zbSelected: null, zbAvailable: false,
     hoverBssid: null, radius: null, fs: { open: false, wired: false, native: false },
     sdr: { available: false, running: false, band: '2.4', bandMhz: null, floor: -120, seq: 0, rows: [], maxhold: null, poll: null, statusPoll: null, error: null } };
@@ -3050,14 +3052,12 @@ function _wifiDrawBtOverlay(ctx, r24, xFor, g) {
     }
 }
 
-// ============================================================================
-// Full-screen spectrum console
+// =====================================================================// Full-screen spectrum console
 // ----------------------------------------------------------------------------
 // The same survey, the same _wifiState — but the whole viewport: a large
 // hit-testable spectrum, the AP list underneath it, and an inspector that
 // shows every field the scan produced for whatever is selected.
-// ============================================================================
-
+// =====================================================================
 function wifiToggleFullscreen() {
     const el = document.getElementById('wifi-fs'); if (!el) return;
     if (el.classList.contains('hidden')) _wifiFsOpen(el); else _wifiFsClose(el);
@@ -4730,11 +4730,9 @@ function wifiSurveyDelete() {
         .catch(() => { if (st) st.textContent = 'delete failed'; });
 }
 
-// ============================================================================
-// WiFi Defense — 802.11 frame monitor / WIDS (top-level tab)
+// =====================================================================// WiFi Defense — 802.11 frame monitor / WIDS (top-level tab)
 // Backend: /api/wifidef/* (wifi_defense.py)
-// ============================================================================
-const _wifidef = { iface: '', monitor: null, data: null, continuous: false, timer: null, abort: null, btCache: { devices: null, ts: 0 } };
+// =====================================================================const _wifidef = { iface: '', monitor: null, data: null, continuous: false, timer: null, abort: null, btCache: { devices: null, ts: 0 } };
 
 const _WIFIDEF_THREAT = {
     clear: ['CLEAR', 'bg-green-600/20 text-green-300 border border-green-600/50'],
@@ -5717,11 +5715,9 @@ async function wifidefProbePortal(ssid) {
     }
 }
 
-// ============================================================================
-// Network diagnostics (Diagnostics / Switch & L2 / Interfaces sub-tabs)
+// =====================================================================// Network diagnostics (Diagnostics / Switch & L2 / Interfaces sub-tabs)
 // Backend: /api/net/* (see network_diagnostics.py)
-// ============================================================================
-
+// =====================================================================
 // Last-fetched payloads for each net panel, so "Export CSV" has data to dump.
 let _ndLastLldp = [], _ndLastArp = null, _ndLastIfaces = [],
     _ndLastMtr = null, _ndLastIdentity = null, _ndLastIsp = [],
@@ -11547,10 +11543,8 @@ function initializeThreatIntelFilters() {
     setThreatIntelFilter(threatIntelStatusFilter, { skipReload: true });
 }
 
-// ============================================================================
-// DATA LOADING
-// ============================================================================
-
+// =====================================================================// DATA LOADING
+// =====================================================================
 async function loadInitialData() {
     try {
         // Check auth status to show/hide logout button and wait for DB if needed
@@ -12034,10 +12028,8 @@ async function loadNetworkData() {
     }
 }
 
-// ============================================================================
-// ALL SCANNED NETWORKS TAB (PR 3)
-// ============================================================================
-
+// =====================================================================// ALL SCANNED NETWORKS TAB (PR 3)
+// =====================================================================
 async function loadAllNetworksData() {
     const container = document.getElementById('networks-list-container');
     if (!container) return;
@@ -12257,10 +12249,8 @@ async function updateNetworkStatusBanner() {
     }
 }
 
-// ============================================================================
-// STABLE NETWORK DATA FUNCTIONS
-// ============================================================================
-
+// =====================================================================// STABLE NETWORK DATA FUNCTIONS
+// =====================================================================
 // Per-device scan ignore lists (issue #459). Cached client-side so the hosts
 // table can show the correct Ignore/Unignore state without re-fetching config
 // on every row. Kept in sync by loadScanBlacklist() and toggleIgnoreHost().
@@ -12727,10 +12717,8 @@ function handleScanError(data) {
     resetScanButtons();
 }
 
-// ============================================================================
-// DEEP SCAN FUNCTIONS
-// ============================================================================
-
+// =====================================================================// DEEP SCAN FUNCTIONS
+// =====================================================================
 async function handleCustomDeepScanRequest() {
     const inputEl = document.getElementById('custom-deep-scan-ip');
     const statusEl = document.getElementById('custom-deep-scan-status');
@@ -13124,10 +13112,8 @@ function handleDeepScanUpdate(data) {
     }
 }
 
-// ============================================================================
-// ENHANCED NETWORK SCANNING WITH ARP/NMAP
-// ============================================================================
-
+// =====================================================================// ENHANCED NETWORK SCANNING WITH ARP/NMAP
+// =====================================================================
 // Network scanning variables for enhanced scanning
 let enhancedNetworkScanInterval = null;
 let isEnhancedRealTimeScanning = false;
@@ -14437,10 +14423,8 @@ function toggleAttackHost(safeId) {
     }
 }
 
-// ============================================================================
-// VULNERABILITY INTELLIGENCE FUNCTIONS
-// ============================================================================
-
+// =====================================================================// VULNERABILITY INTELLIGENCE FUNCTIONS
+// =====================================================================
 async function loadVulnerabilityIntel() {
     try {
         const container = document.getElementById('vulnerability-intel-container');
@@ -14635,10 +14619,8 @@ async function refreshVulnerabilityIntel() {
     await loadVulnerabilityIntel();
 }
 
-// ============================================================================
-// CREDENTIALS AND LOOT FUNCTIONS  
-// ============================================================================
-
+// =====================================================================// CREDENTIALS AND LOOT FUNCTIONS  
+// =====================================================================
 function escapeHtml(text) {
     const div = document.createElement('div');
     div.textContent = text;
@@ -14710,10 +14692,8 @@ async function loadConfigData() {
     }
 }
 
-// ============================================================================
-// SCAN INTENSITY (Light / Medium / High — controls nmap loudness)
-// ============================================================================
-
+// =====================================================================// SCAN INTENSITY (Light / Medium / High — controls nmap loudness)
+// =====================================================================
 async function loadScanIntensity() {
     const select = document.getElementById('scan-intensity-select');
     const badge = document.getElementById('scan-intensity-current');
@@ -14764,10 +14744,8 @@ async function onScanIntensityChanged(selectEl) {
     }
 }
 
-// ============================================================================
-// SECURITY / AUTHENTICATION CONFIG
-// ============================================================================
-
+// =====================================================================// SECURITY / AUTHENTICATION CONFIG
+// =====================================================================
 let _securityExpanded = false;
 
 function toggleSecuritySection() {
@@ -16296,10 +16274,8 @@ async function loadFilesData() {
     }
 }
 
-// ============================================================================
-// PWNAGOTCHI VISIBILITY MANAGEMENT
-// ============================================================================
-
+// =====================================================================// PWNAGOTCHI VISIBILITY MANAGEMENT
+// =====================================================================
 function arePwnFeaturesEnabled() {
     return localStorage.getItem('pwnagotchi-enabled') === 'true';
 }
@@ -16348,10 +16324,8 @@ function initializePwnagotchiVisibility() {
     applyPwnVisibilityPreference(isEnabled);
 }
 
-// ============================================================================
-// PWNAGOTCHI BRIDGE UPDATES (independent of Ragnar self-update)
-// ============================================================================
-
+// =====================================================================// PWNAGOTCHI BRIDGE UPDATES (independent of Ragnar self-update)
+// =====================================================================
 let pwnUpdateInitialChecked = false; // wired in Task 9 (one-shot auto-check on Bridge reveal)
 let pwnUpdateInFlight = false;
 
@@ -16611,10 +16585,8 @@ function updatePwnToggleAvailability(isHeadless) {
     }
 }
 
-// ============================================================================
-// HEADLESS MODE DETECTION AND MANAGEMENT
-// ============================================================================
-
+// =====================================================================// HEADLESS MODE DETECTION AND MANAGEMENT
+// =====================================================================
 /**
  * Detect and handle headless mode (server installations without a display)
  * Headless mode hides display-related UI elements
@@ -16682,10 +16654,8 @@ function applyHeadlessVisibility(isHeadless) {
     if (window._updateNavMode) window._updateNavMode();
 }
 
-// ============================================================================
-// HARDWARE PROFILE MANAGEMENT FUNCTIONS
-// ============================================================================
-
+// =====================================================================// HARDWARE PROFILE MANAGEMENT FUNCTIONS
+// =====================================================================
 async function loadHardwareProfiles() {
     try {
         const profiles = await fetchAPI('/api/config/hardware-profiles');
@@ -16868,10 +16838,8 @@ function displayCurrentProfile(config) {
     }
 }
 
-// ============================================================================
-// SYSTEM MANAGEMENT FUNCTIONS
-// ============================================================================
-
+// =====================================================================// SYSTEM MANAGEMENT FUNCTIONS
+// =====================================================================
 function updateReleaseGateState(payload = {}) {
     const enabled = Boolean(payload && payload.enabled);
     const incomingMessage = typeof (payload && payload.message) === 'string' ? payload.message.trim() : '';
@@ -17515,10 +17483,8 @@ async function shutdownSystem() {
     }
 }
 
-// ============================================================================
-// DATA MANAGEMENT FUNCTIONS
-// ============================================================================
-
+// =====================================================================// DATA MANAGEMENT FUNCTIONS
+// =====================================================================
 async function resetVulnerabilities() {
     if (!confirm('⚠️ Reset All Vulnerabilities?\n\nThis will permanently delete:\n• All discovered vulnerabilities\n• Vulnerability scan results\n• Network intelligence vulnerability data\n\nThis action cannot be undone. Continue?')) {
         return;
@@ -17595,10 +17561,8 @@ async function updateVulnerabilityCount() {
     }
 }
 
-// ============================================================================
-// WI-FI MANAGEMENT FUNCTIONS
-// ============================================================================
-
+// =====================================================================// WI-FI MANAGEMENT FUNCTIONS
+// =====================================================================
 async function startAPMode() {
     if (!confirm('Start AP Mode?\n\nThis will:\n• Disconnect from current Wi-Fi\n• Start "Ragnar" access point\n• Enable 3-minute smart cycling\n• Allow Wi-Fi configuration via AP\n\nContinue?')) {
         return;
@@ -17769,10 +17733,8 @@ async function refreshWifiStatus() {
     }
 }
 
-// ============================================================================
-// ETHERNET / LAN STATUS
-// ============================================================================
-
+// =====================================================================// ETHERNET / LAN STATUS
+// =====================================================================
 async function refreshEthernetStatus() {
     const indicator = document.getElementById('lan-status-indicator');
     const info = document.getElementById('lan-info');
@@ -17826,10 +17788,8 @@ function updateWifiStatus(message, type = '') {
     addConsoleMessage(message, type === 'error' ? 'error' : type === 'ap-mode' ? 'warning' : 'info');
 }
 
-// ============================================================================
-// WI-FI MANAGEMENT FUNCTIONS
-// ============================================================================
-
+// =====================================================================// WI-FI MANAGEMENT FUNCTIONS
+// =====================================================================
 let currentWifiNetworks = [];
 let selectedWifiNetwork = null;
 const WIFI_INTERFACE_STORAGE_KEY = 'wifi-selected-interface';
@@ -19154,10 +19114,8 @@ async function loadConsoleLogs() {
     }
 }
 
-// ============================================================================
-// BLUETOOTH MANAGEMENT FUNCTIONS
-// ============================================================================
-
+// =====================================================================// BLUETOOTH MANAGEMENT FUNCTIONS
+// =====================================================================
 // Global variables for Bluetooth
 let currentBluetoothDevices = [];
 let isBluetoothScanning = false;
@@ -19683,10 +19641,8 @@ function clearBluetoothDevices() {
     addConsoleMessage('Cleared Bluetooth device list', 'info');
 }
 
-// ============================================================================
-// BLUETOOTH PENTEST FUNCTIONS
-// ============================================================================
-
+// =====================================================================// BLUETOOTH PENTEST FUNCTIONS
+// =====================================================================
 async function startBeaconTracking() {
     const btn = document.getElementById('beacon-track-btn');
     const resultsDiv = document.getElementById('beacon-results');
@@ -20014,10 +19970,8 @@ async function downloadPentestReport() {
     }
 }
 
-// ============================================================================
-// COMPLIANCE – CIS / PCI DSS reporting
-// ============================================================================
-
+// =====================================================================// COMPLIANCE – CIS / PCI DSS reporting
+// =====================================================================
 let complianceFramework = 'cis';
 let threatIntelSubtab = 'vulns';
 
@@ -20176,10 +20130,8 @@ function renderCompliancePCI(data, summaryEl, resultsEl) {
     resultsEl.innerHTML = html;
 }
 
-// ============================================================================
-// AIRSNITCH – Wi-Fi Client Isolation Testing
-// ============================================================================
-
+// =====================================================================// AIRSNITCH – Wi-Fi Client Isolation Testing
+// =====================================================================
 async function populateAirSnitchInterfaceDropdowns() {
     const victimSel   = document.getElementById('airsnitch-iface-victim');
     const attackerSel = document.getElementById('airsnitch-iface-attacker');
@@ -20396,10 +20348,8 @@ async function refreshAirSnitchResults() {
     }
 }
 
-// ============================================================================
-// MANUAL MODE FUNCTIONS
-// ============================================================================
-
+// =====================================================================// MANUAL MODE FUNCTIONS
+// =====================================================================
 const DEFAULT_MANUAL_ATTACK_MATRIX = {
     ssh: { label: 'SSH Brute Force', ports: ['22'] },
     ftp: { label: 'FTP Brute Force', ports: ['21'] },
@@ -21121,10 +21071,8 @@ async function runManualLynisPentest() {
     }
 }
 
-// ============================================================================
-// API HELPERS
-// ============================================================================
-
+// =====================================================================// API HELPERS
+// =====================================================================
 const NETWORK_CONTEXT_PARAM = 'network';
 
 function resolveNetworkAwareEndpoint(endpoint) {
@@ -21464,10 +21412,8 @@ async function postAPI(endpoint, data) {
     }
 }
 
-// ============================================================================
-// DASHBOARD UPDATES
-// ============================================================================
-
+// =====================================================================// DASHBOARD UPDATES
+// =====================================================================
 async function refreshDashboard() {
     try {
         const data = await fetchAPI('/api/status');
@@ -21527,15 +21473,13 @@ function updateDashboardStatus(data) {
     renderPowerBadge(data.power);
 }
 
-// ============================================================================
-// POWER / UNDER-VOLTAGE BADGE
+// =====================================================================// POWER / UNDER-VOLTAGE BADGE
 //
 // The badge comes straight off the SoC throttle register (a measured signal),
 // so it only lights when the board is actually being starved — never on a
 // guess. Clicking it opens the breakdown of what is (estimated to be) drawing
 // the power, because on a Pi there is no per-port current meter to measure it.
-// ============================================================================
-function renderPowerBadge(power) {
+// =====================================================================function renderPowerBadge(power) {
     const badge = document.getElementById('power-warning-badge');
     if (!badge) return;
     const level = power && power.level;
@@ -22090,10 +22034,8 @@ function updatePrimaryConnectionCard(data) {
     }
 }
 
-// ============================================================================
-// CONSOLE
-// ============================================================================
-
+// =====================================================================// CONSOLE
+// =====================================================================
 const MAX_CONSOLE_LINES = 400;
 const CONSOLE_NOISE_PATTERNS = [
     'comment.py - INFO - Comments loaded successfully from cache'
@@ -22327,10 +22269,8 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
-// ============================================================================
-// TABLE DISPLAYS
-// ============================================================================
-
+// =====================================================================// TABLE DISPLAYS
+// =====================================================================
 function displayNetworkTable(data) {
     const container = document.getElementById('network-table');
     const tableBody = document.getElementById('network-hosts-table');
@@ -22598,6 +22538,10 @@ function displayConfigForm(config) {
     };
     
     const knownBooleans = ['manual_mode', 'debug_mode', 'scan_vuln_running', 'scan_vuln_no_ports', 'enable_attacks', 'blacklistcheck', 'wardriving_enabled', 'wardriving_display', 'wardriving_auto_export', 'wardriving_wigle_include_zigbee', 'exploit_enabled', 'exploit_allow_external', 'exploit_ai_triage''];
+        'AI & Credentials': ['ai_enabled', 'openai_api_token', 'ai_model', 'ai_base_url', 'ai_api_style', 'ai_creds_enabled', 'ai_creds_max_pairs']
+    };
+    
+    const knownBooleans = ['manual_mode', 'debug_mode', 'scan_vuln_running', 'scan_vuln_no_ports', 'enable_attacks', 'blacklistcheck', 'wardriving_enabled', 'wardriving_display', 'wardriving_auto_export', 'wardriving_wigle_include_zigbee', 'ai_enabled', 'ai_creds_enabled''];
     const alwaysShowKeys = new Set(['network_max_failed_pings', 'gc9a01_mascot_color', 'ssd1306_i2c_address', 'lcd1602_i2c_address', 'spi_clock_mhz', 'max7219_spi_port', 'max7219_spi_device', 'max7219_block_orientation', 'display_brightness', 'wardriving_scan_interval', 'wardriving_gps_port', 'wardriving_gps_baudrate']);
     const fallbackValues = {
         network_max_failed_pings: 15,
@@ -23551,10 +23495,8 @@ function setupEpaperAutoRefresh() {
     }, 5000); // Refresh every 5 seconds when on e-paper tab
 }
 
-// ============================================================================
-// FILE MANAGEMENT FUNCTIONS
-// ============================================================================
-
+// =====================================================================// FILE MANAGEMENT FUNCTIONS
+// =====================================================================
 let currentDirectory = '/';
 let fileOperationInProgress = false;
 let currentFileSort = 'name';
@@ -25949,10 +25891,8 @@ function showNotification(message, type) {
     }, 3000);
 }
 
-// ============================================================================
-// SYSTEM MONITORING FUNCTIONS
-// ============================================================================
-
+// =====================================================================// SYSTEM MONITORING FUNCTIONS
+// =====================================================================
 let systemMonitoringInterval;
 let currentProcessSort = 'cpu';
 
@@ -26338,10 +26278,8 @@ function showSystemError(message) {
     showNotification(message, 'error');
 }
 
-// ============================================================================
-// NETKB (Network Knowledge Base) FUNCTIONS
-// ============================================================================
-
+// =====================================================================// NETKB (Network Knowledge Base) FUNCTIONS
+// =====================================================================
 let currentNetkbFilter = 'all';
 let netkbData = [];
 
@@ -26662,10 +26600,8 @@ function showNetkbInfo(message) {
     showNotification(message, 'info');
 }
 
-// ============================================================================
-// GLOBAL FUNCTION EXPORTS (for HTML onclick handlers)
-// ============================================================================
-
+// =====================================================================// GLOBAL FUNCTION EXPORTS (for HTML onclick handlers)
+// =====================================================================
 // Make functions available globally for HTML onclick handlers
 window.loadConsoleLogs = loadConsoleLogs;
 window.clearConsole = clearConsole;
@@ -26826,10 +26762,8 @@ window.showVulnerabilityDetails = showVulnerabilityDetails;
 window.closeVulnerabilityModal = closeVulnerabilityModal;
 window.setThreatIntelFilter = setThreatIntelFilter;
 
-// ===========================================
-// THREAT INTELLIGENCE FUNCTIONS
-// ===========================================
-
+// ====================================// THREAT INTELLIGENCE FUNCTIONS
+// ====================================
 function setThreatIntelFilter(status, options = {}) {
     const validStatuses = ['open', 'resolved', 'all'];
     if (!validStatuses.includes(status)) {
@@ -27598,10 +27532,8 @@ function formatAIText(text) {
     return output.join('');
 }
 
-// ============================================================================
-// AI INSIGHTS FUNCTIONS
-// ============================================================================
-
+// =====================================================================// AI INSIGHTS FUNCTIONS
+// =====================================================================
 // Client-side AI insights cache (1 hour TTL to match server-side cache)
 let aiInsightsCache = {
     data: null,
@@ -27950,10 +27882,8 @@ function toggleAISection(section) {
     }
 }
 
-// ============================================================================
-// SERVER MODE & ADVANCED FEATURES
-// ============================================================================
-
+// =====================================================================// SERVER MODE & ADVANCED FEATURES
+// =====================================================================
 let serverModeEnabled = false;
 let trafficCaptureRunning = false;
 let trafficRefreshInterval = null;
@@ -28042,10 +27972,8 @@ document.addEventListener('DOMContentLoaded', function() {
     checkServerCapabilities();
 });
 
-// ============================================================================
-// TRAFFIC ANALYSIS FUNCTIONS
-// ============================================================================
-
+// =====================================================================// TRAFFIC ANALYSIS FUNCTIONS
+// =====================================================================
 async function loadTrafficAnalysisData() {
     try {
         // Fire status and all sub-data calls in parallel for faster load
@@ -29671,10 +29599,8 @@ function closeTrafficPortModal() {
     }
 }
 
-// ============================================================================
-// WARDRIVING FUNCTIONS
-// ============================================================================
-
+// =====================================================================// WARDRIVING FUNCTIONS
+// =====================================================================
 let _wardrivingInterval = null;
 
 async function loadWardrivingData() {
@@ -31041,10 +30967,8 @@ async function loadWardrivingSpeedUnitState() {
     } catch (e) { /* silent */ }
 }
 
-// ============================================================================
-// ON-SCREEN KIOSK (Pi Flux / HDMI-DSI display)
-// ============================================================================
-
+// =====================================================================// ON-SCREEN KIOSK (Pi Flux / HDMI-DSI display)
+// =====================================================================
 let _kioskSettingsDebounce = null;
 let _kioskPollTimer = null;
 
@@ -31907,11 +31831,9 @@ function renderWardrivingSessions(sessions) {
     }).join('');
 }
 
-// ============================================================================
-// WARDRIVE UPLOADS -> WDGWars / WiGLE
+// =====================================================================// WARDRIVE UPLOADS -> WDGWars / WiGLE
 // Backend: GET/POST /api/wardriving/upload-config  and  POST /api/wardriving/upload/<id>
-// ============================================================================
-async function loadWardriveUploadConfig() {
+// =====================================================================async function loadWardriveUploadConfig() {
     let d;
     try {
         d = await (await fetch('/api/wardriving/upload-config')).json();
@@ -32333,10 +32255,8 @@ function selectWardrivingSession(sessionId) {
     if (_wdMapVisible) loadWardrivingMapData();
 }
 
-// ============================================================================
-// WARDRIVING MAP
-// ============================================================================
-let _wdMap = null;
+// =====================================================================// WARDRIVING MAP
+// =====================================================================let _wdMap = null;
 let _wdMapVisible = false;
 let _wdMapClusterGroup = null;
 let _wdMapAllNetworks = [];
@@ -32728,10 +32648,8 @@ function updateWardrivingToggleButton() {
     }
 }
 
-// ============================================================================
-// ADVANCED VULNERABILITY SCANNING FUNCTIONS
-// ============================================================================
-
+// =====================================================================// ADVANCED VULNERABILITY SCANNING FUNCTIONS
+// =====================================================================
 async function loadAdvancedVulnData() {
     try {
         // Fetch status and findings in parallel for faster load
@@ -33176,10 +33094,8 @@ function renderInlineScanFindings(scanId, scan) {
     `;
 }
 
-// ============================================================================
-// SCAN LIVE LOGS FUNCTIONS
-// ============================================================================
-
+// =====================================================================// SCAN LIVE LOGS FUNCTIONS
+// =====================================================================
 function toggleAdvVulnScanLogs(scanId) {
     if (advVulnExpandedLogIds.has(scanId)) {
         advVulnExpandedLogIds.delete(scanId);
@@ -34028,10 +33944,8 @@ function getAuthParams(authType) {
     return authParams;
 }
 
-// ============================================================================
-// Pre-flight Recon (TLS audit, passive DNS, content discovery)
-// ============================================================================
-
+// =====================================================================// Pre-flight Recon (TLS audit, passive DNS, content discovery)
+// =====================================================================
 let reconScanId = null;
 let reconPollInterval = null;
 
@@ -34305,13 +34219,11 @@ async function refreshAdvVulnData() {
     await loadAdvancedVulnData();
 }
 
-// ============================================================================
-// MESH SCAN FLAG — a peer can run a scanner this board can't; delegation is
+// =====================================================================// MESH SCAN FLAG — a peer can run a scanner this board can't; delegation is
 // transparent (the server routes /api/vuln-advanced/scan to the peer and the
 // delegated scan shows up in the normal active-scans list). This just renders
 // the "handled by <viking>" flag. See advVulnMeshScan (from the status poll).
-// ============================================================================
-const MESH_LABEL = { nuclei: 'Nuclei', zap: 'ZAP' };
+// =====================================================================const MESH_LABEL = { nuclei: 'Nuclei', zap: 'ZAP' };
 
 function renderMeshScanFlag(mesh) {
     const el = document.getElementById('mesh-scan-flag');
@@ -34341,10 +34253,8 @@ function renderMeshScanFlag(mesh) {
         `<span class="font-semibold">${escapeHtml(dest)}</span> — and the results come back here. Just start your scan as usual.`;
 }
 
-// ============================================================================
-// OWASP ZAP CONTROL FUNCTIONS
-// ============================================================================
-
+// =====================================================================// OWASP ZAP CONTROL FUNCTIONS
+// =====================================================================
 function updateZapControlPanel(scanners, meshZap, meshZapViking) {
     const panel = document.getElementById('zap-control-panel');
     const daemonStatus = document.getElementById('zap-daemon-status');
@@ -34583,10 +34493,8 @@ async function zapClearAuthentication() {
     showNotification('Auth is now per-scan - no persistent auth to clear', 'info');
 }
 
-// ============================================================================
-// TARGET CREDENTIAL MANAGEMENT FUNCTIONS
-// ============================================================================
-
+// =====================================================================// TARGET CREDENTIAL MANAGEMENT FUNCTIONS
+// =====================================================================
 // Cache for credential check results (to avoid excessive API calls)
 let _credentialCheckCache = {};
 let _credentialCheckTimeout = null;
@@ -35615,15 +35523,13 @@ window.toggleSubnetPanel = toggleSubnetPanel;
 window.addScanSubnet = addScanSubnet;
 window.removeScanSubnet = removeScanSubnet;
 
-// ============================================================================
-// RAGNAR MESH
+// =====================================================================// RAGNAR MESH
 // A mesh of peer Ragnars over Tailscale. There is no controller: this unit
 // publishes its own report and reads its neighbours', so every unit renders the
 // same view independently. Everything below the "Reported by the mesh" heading
 // is remote data — labelled as such on purpose, so an operator is never in
 // doubt about which box a number came from.
-// ============================================================================
-
+// =====================================================================
 let meshRefreshInFlight = false;
 // Last status payload, kept so the details modal can render a unit's full
 // pulled data without re-fetching — and crucially without the browser needing
@@ -37273,10 +37179,8 @@ window.meshLeaveShare = meshLeaveShare;
 window.meshEnable = meshEnable;
 window.meshDiagnose = meshDiagnose;
 
-// ==========================================================================
-// Assets tab — Asset Inventory + SIEM outbound forwarding
-// ==========================================================================
-let _assetsState = { assets: [], summary: {}, recent: [] };
+// ===================================================================// Assets tab — Asset Inventory + SIEM outbound forwarding
+// ===================================================================let _assetsState = { assets: [], summary: {}, recent: [] };
 let _siemState = { enabled: false, min_severity: 'high', targets: [], watchtower_enabled: false };
 
 async function loadAssetsData() {

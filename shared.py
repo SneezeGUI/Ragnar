@@ -890,6 +890,14 @@ class SharedData:
             "exploit_max_per_host": 5,
             "exploit_ai_triage": True,
 
+            # AI-assisted credentials: ask the model for a few ranked
+            # (user, password) pairs grounded in host context, try those BEFORE
+            # the wordlist spray. Fail-open to the wordlist whenever the model
+            # is off or unreachable. See actions/ai_credential_engine.py.
+            "ai_creds_enabled": False,
+            "ai_creds_max_pairs": 25,
+
+
             "__title_pushover__": "Pushover Notifications",
             "pushover_enabled": False,
             "pushover_notify_new_device": True,

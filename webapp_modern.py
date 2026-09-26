@@ -10527,6 +10527,23 @@ def _apply_config_update(data):
                     ai_service.client = None
                     ai_service.initialization_error = None
                     ai_reload_success = True
+
+        # Reload ntfy/webhook sinks when their settings change so the operator
+        # does not need a service restart to point alerts somewhere new.
+        sink_keys = (
+            'ntfy_enabled', 'ntfy_server', 'ntfy_topic', 'ntfy_token',
+            'webhook_enabled', 'webhook_url', 'webhook_flavour',
+        )
+        if any(k in data for k in sink_keys):
+            try:
+                from notify_sinks import get_sinks
+                get_sinks(shared_data).reload()
+                _po = getattr(shared_data, '_pushover_service', None)
+                if _po is not None:
+                    # keep PushoverService's cached view of sink state fresh
+                    pass
+            except Exception as _sink_exc:
+                logger.warning("notify sink reload failed: %s", _sink_exc)
         
         # Emit update to all connected clients
         socketio.emit('config_updated', shared_data.config)

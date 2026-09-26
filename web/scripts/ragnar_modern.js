@@ -555,6 +555,34 @@ const configMetadata = {
         label: "OpenAI API Token",
         description: "Your OpenAI API key for AI-powered features. Keep this confidential."
     },
+    ntfy_enabled: {
+        label: "Enable ntfy Notifications",
+        description: "Push alerts to an ntfy topic (ntfy.sh or self-hosted). No account required for public topics."
+    },
+    ntfy_server: {
+        label: "ntfy Server",
+        description: "Base URL of the ntfy server, e.g. https://ntfy.sh or https://ntfy.example.com"
+    },
+    ntfy_topic: {
+        label: "ntfy Topic",
+        description: "Topic name to publish to, e.g. ragnar-alerts"
+    },
+    ntfy_token: {
+        label: "ntfy Access Token",
+        description: "Optional bearer token for auth-protected ntfy topics. Leave blank for public topics."
+    },
+    webhook_enabled: {
+        label: "Enable Webhook Notifications",
+        description: "POST alert payloads to a generic JSON webhook (Slack/Discord/Mattermost/anything)."
+    },
+    webhook_url: {
+        label: "Webhook URL",
+        description: "HTTPS endpoint that accepts POST with a JSON body."
+    },
+    webhook_flavour: {
+        label: "Webhook Format",
+        description: "json = {source,title,message,priority,ts}; slack = {text: \"*title*\nmessage\"} for Slack/Discord-compatible endpoints."
+    },
     wardriving_enabled: {
         label: "Enable Wardriving",
         description: "Enable the wardriving tab for WiFi network discovery with GPS mapping. Requires a USB GPS module for location data. Note: Automatic AP mode is disabled while wardriving is enabled — AP mode (hostapd) would take over wlan0 and block WiFi scanning."

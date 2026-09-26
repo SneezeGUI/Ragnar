@@ -323,10 +323,20 @@ class AICredentialEngine:
                     f"host — do NOT repeat them, propose DIFFERENT ones:\n{sample}"
                 )
 
+        override_model = str(self._cfg("ai_creds_model", "") or "").strip()
         try:
             # `_ask` is the shared chat/responses entry point used by every
             # analysis method. Chat-style, so not cached internally — we cache.
-            reply = svc._ask(system, user)
+            if override_model:
+                old_model = getattr(svc, "model", None)
+                try:
+                    svc.model = override_model
+                    reply = svc._ask(system, user)
+                finally:
+                    if old_model is not None:
+                        svc.model = old_model
+            else:
+                reply = svc._ask(system, user)
         except Exception as exc:
             logger.warning("ai_creds: model call failed for %s:%s (%s)", ip, service, exc)
             return []

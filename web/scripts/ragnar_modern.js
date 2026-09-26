@@ -555,6 +555,30 @@ const configMetadata = {
         label: "OpenAI API Token",
         description: "Your OpenAI API key for AI-powered features. Keep this confidential."
     },
+    exploit_enabled: {
+        label: "Enable Exploit Engine",
+        description: "Turn CVE findings into scoped exploit attempts (Nuclei templates + built-in PoC probes). OFF by default — exploitation can crash services. Only run against networks you own or are authorized to test."
+    },
+    exploit_allow_external: {
+        label: "Allow External Targets",
+        description: "Permit exploitation of non-RFC1918 addresses. OFF by default. Prefer the Allowlist for specific external hosts."
+    },
+    exploit_allowlist: {
+        label: "Exploit Allowlist",
+        description: "Comma-separated IPs that may be tested even if external. Example: 203.0.113.10, 198.51.100.5"
+    },
+    exploit_min_cvss: {
+        label: "Min CVSS for Exploits",
+        description: "Only attempt CVEs at or above this score (unless they are in the high-value list). Default: 7.0"
+    },
+    exploit_max_per_host: {
+        label: "Max Exploit Attempts / Host",
+        description: "Cap on exploit attempts per host per run (1-50). Default: 5"
+    },
+    exploit_ai_triage: {
+        label: "AI Exploit Triage",
+        description: "Ask the AI which CVEs are actually plausible for the observed banner before attempting. Reduces noise and crash risk."
+    },
     wardriving_enabled: {
         label: "Enable Wardriving",
         description: "Enable the wardriving tab for WiFi network discovery with GPS mapping. Requires a USB GPS module for location data. Note: Automatic AP mode is disabled while wardriving is enabled — AP mode (hostapd) would take over wlan0 and block WiFi scanning."

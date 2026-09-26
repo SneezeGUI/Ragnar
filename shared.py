@@ -878,6 +878,18 @@ class SharedData:
             "ai_max_tokens": 500,
             "ai_temperature": 0.7,
 
+            # Exploitation engine (actions/exploit_engine.py).
+            # Turns CVE findings into scoped, triaged exploit attempts.
+            # OFF by default: exploitation can crash services and must be
+            # an explicit operator choice. Scope is RFC1918-only unless
+            # exploit_allow_external is set or an IP is allowlisted.
+            "exploit_enabled": False,
+            "exploit_allow_external": False,
+            "exploit_allowlist": [],
+            "exploit_min_cvss": 7.0,
+            "exploit_max_per_host": 5,
+            "exploit_ai_triage": True,
+
             "__title_pushover__": "Pushover Notifications",
             "pushover_enabled": False,
             "pushover_notify_new_device": True,

@@ -22593,9 +22593,11 @@ function displayConfigForm(config) {
         'Network': ['network_max_failed_pings'],
         'Timing': ['startup_delay', 'web_delay', 'screen_delay', 'scan_interval'],
         'Display': ['epd_type', 'screen_reversed', 'spi_clock_mhz', 'gc9a01_mascot_color', 'ssd1306_i2c_address', 'lcd1602_i2c_address', 'max7219_spi_port', 'max7219_spi_device', 'max7219_block_orientation', 'display_brightness']
+    },
+        'Exploits': ['exploit_enabled', 'exploit_allow_external', 'exploit_allowlist', 'exploit_min_cvss', 'exploit_max_per_host', 'exploit_ai_triage']
     };
     
-    const knownBooleans = ['manual_mode', 'debug_mode', 'scan_vuln_running', 'scan_vuln_no_ports', 'enable_attacks', 'blacklistcheck', 'wardriving_enabled', 'wardriving_display', 'wardriving_auto_export', 'wardriving_wigle_include_zigbee'];
+    const knownBooleans = ['manual_mode', 'debug_mode', 'scan_vuln_running', 'scan_vuln_no_ports', 'enable_attacks', 'blacklistcheck', 'wardriving_enabled', 'wardriving_display', 'wardriving_auto_export', 'wardriving_wigle_include_zigbee', 'exploit_enabled', 'exploit_allow_external', 'exploit_ai_triage''];
     const alwaysShowKeys = new Set(['network_max_failed_pings', 'gc9a01_mascot_color', 'ssd1306_i2c_address', 'lcd1602_i2c_address', 'spi_clock_mhz', 'max7219_spi_port', 'max7219_spi_device', 'max7219_block_orientation', 'display_brightness', 'wardriving_scan_interval', 'wardriving_gps_port', 'wardriving_gps_baudrate']);
     const fallbackValues = {
         network_max_failed_pings: 15,
